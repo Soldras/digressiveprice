@@ -7,7 +7,9 @@ use \PDO;
 use DigressivePrice\Model\DigressivePriceQuery as ChildDigressivePriceQuery;
 use DigressivePrice\Model\Map\DigressivePriceTableMap;
 use DigressivePrice\Model\Thelia\Model\Product as ChildProduct;
+use DigressivePrice\Model\Thelia\Model\ProductSaleElements as ChildProductSaleElements;
 use DigressivePrice\Model\Thelia\Model\ProductQuery;
+use DigressivePrice\Model\Thelia\Model\ProductSaleElementsQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -66,6 +68,12 @@ abstract class DigressivePrice implements ActiveRecordInterface
     protected $product_id;
 
     /**
+     * The value for the product_sale_elements_id field.
+     * @var        int
+     */
+    protected $product_sale_elements_id;
+
+    /**
      * The value for the price field.
      * @var        double
      */
@@ -93,6 +101,11 @@ abstract class DigressivePrice implements ActiveRecordInterface
      * @var        Product
      */
     protected $aProduct;
+
+    /**
+     * @var        ProductSaleElements
+     */
+    protected $aProductSaleElements;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -217,7 +230,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
         }
 
         if (null === $this->getPrimaryKey()
-            || null === $obj->getPrimaryKey()) {
+            || null === $obj->getPrimaryKey())  {
             return false;
         }
 
@@ -367,6 +380,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function getId()
     {
+
         return $this->id;
     }
 
@@ -377,7 +391,19 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function getProductId()
     {
+
         return $this->product_id;
+    }
+
+    /**
+     * Get the [product_sale_elements_id] column value.
+     *
+     * @return   int
+     */
+    public function getProductSaleElementsId()
+    {
+
+        return $this->product_sale_elements_id;
     }
 
     /**
@@ -387,6 +413,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function getPrice()
     {
+
         return $this->price;
     }
 
@@ -397,6 +424,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function getPromoPrice()
     {
+
         return $this->promo_price;
     }
 
@@ -407,6 +435,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function getQuantityFrom()
     {
+
         return $this->quantity_from;
     }
 
@@ -417,6 +446,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function getQuantityTo()
     {
+
         return $this->quantity_to;
     }
 
@@ -465,6 +495,31 @@ abstract class DigressivePrice implements ActiveRecordInterface
 
         return $this;
     } // setProductId()
+
+    /**
+     * Set the value of [product_sale_elements_id] column.
+     *
+     * @param      int $v new value
+     * @return   \DigressivePrice\Model\DigressivePrice The current object (for fluent API support)
+     */
+    public function setProductSaleElementsId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->product_sale_elements_id !== $v) {
+            $this->product_sale_elements_id = $v;
+            $this->modifiedColumns[DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID] = true;
+        }
+
+        if ($this->aProductSaleElements !== null && $this->aProductSaleElements->getId() !== $v) {
+            $this->aProductSaleElements = null;
+        }
+
+
+        return $this;
+    } // setProductSaleElementsId()
 
     /**
      * Set the value of [price] column.
@@ -585,22 +640,27 @@ abstract class DigressivePrice implements ActiveRecordInterface
     public function hydrate($row, $startcol = 0, $rehydrate = false, $indexType = TableMap::TYPE_NUM)
     {
         try {
+
+
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : DigressivePriceTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DigressivePriceTableMap::translateFieldName('ProductId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->product_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DigressivePriceTableMap::translateFieldName('Price', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DigressivePriceTableMap::translateFieldName('ProductSaleElementsId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->product_sale_elements_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DigressivePriceTableMap::translateFieldName('Price', TableMap::TYPE_PHPNAME, $indexType)];
             $this->price = (null !== $col) ? (double) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DigressivePriceTableMap::translateFieldName('PromoPrice', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DigressivePriceTableMap::translateFieldName('PromoPrice', TableMap::TYPE_PHPNAME, $indexType)];
             $this->promo_price = (null !== $col) ? (double) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DigressivePriceTableMap::translateFieldName('QuantityFrom', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DigressivePriceTableMap::translateFieldName('QuantityFrom', TableMap::TYPE_PHPNAME, $indexType)];
             $this->quantity_from = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DigressivePriceTableMap::translateFieldName('QuantityTo', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DigressivePriceTableMap::translateFieldName('QuantityTo', TableMap::TYPE_PHPNAME, $indexType)];
             $this->quantity_to = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -610,7 +670,8 @@ abstract class DigressivePrice implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = DigressivePriceTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = DigressivePriceTableMap::NUM_HYDRATE_COLUMNS.
+
         } catch (Exception $e) {
             throw new PropelException("Error populating \DigressivePrice\Model\DigressivePrice object", 0, $e);
         }
@@ -633,6 +694,9 @@ abstract class DigressivePrice implements ActiveRecordInterface
     {
         if ($this->aProduct !== null && $this->product_id !== $this->aProduct->getId()) {
             $this->aProduct = null;
+        }
+        if ($this->aProductSaleElements !== null && $this->product_sale_elements_id !== $this->aProductSaleElements->getId()) {
+            $this->aProductSaleElements = null;
         }
     } // ensureConsistency
 
@@ -674,6 +738,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aProduct = null;
+            $this->aProductSaleElements = null;
         } // if (deep)
     }
 
@@ -797,6 +862,13 @@ abstract class DigressivePrice implements ActiveRecordInterface
                 $this->setProduct($this->aProduct);
             }
 
+            if ($this->aProductSaleElements !== null) {
+                if ($this->aProductSaleElements->isModified() || $this->aProductSaleElements->isNew()) {
+                    $affectedRows += $this->aProductSaleElements->save($con);
+                }
+                $this->setProductSaleElements($this->aProductSaleElements);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -809,6 +881,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
             }
 
             $this->alreadyInSave = false;
+
         }
 
         return $affectedRows;
@@ -839,6 +912,9 @@ abstract class DigressivePrice implements ActiveRecordInterface
         if ($this->isColumnModified(DigressivePriceTableMap::PRODUCT_ID)) {
             $modifiedColumns[':p' . $index++]  = 'PRODUCT_ID';
         }
+        if ($this->isColumnModified(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'PRODUCT_SALE_ELEMENTS_ID';
+        }
         if ($this->isColumnModified(DigressivePriceTableMap::PRICE)) {
             $modifiedColumns[':p' . $index++]  = 'PRICE';
         }
@@ -867,6 +943,9 @@ abstract class DigressivePrice implements ActiveRecordInterface
                         break;
                     case 'PRODUCT_ID':
                         $stmt->bindValue($identifier, $this->product_id, PDO::PARAM_INT);
+                        break;
+                    case 'PRODUCT_SALE_ELEMENTS_ID':
+                        $stmt->bindValue($identifier, $this->product_sale_elements_id, PDO::PARAM_INT);
                         break;
                     case 'PRICE':
                         $stmt->bindValue($identifier, $this->price, PDO::PARAM_STR);
@@ -949,15 +1028,18 @@ abstract class DigressivePrice implements ActiveRecordInterface
                 return $this->getProductId();
                 break;
             case 2:
-                return $this->getPrice();
+                return $this->getProductSaleElementsId();
                 break;
             case 3:
-                return $this->getPromoPrice();
+                return $this->getPrice();
                 break;
             case 4:
-                return $this->getQuantityFrom();
+                return $this->getPromoPrice();
                 break;
             case 5:
+                return $this->getQuantityFrom();
+                break;
+            case 6:
                 return $this->getQuantityTo();
                 break;
             default:
@@ -991,10 +1073,11 @@ abstract class DigressivePrice implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getProductId(),
-            $keys[2] => $this->getPrice(),
-            $keys[3] => $this->getPromoPrice(),
-            $keys[4] => $this->getQuantityFrom(),
-            $keys[5] => $this->getQuantityTo(),
+            $keys[2] => $this->getProductSaleElementsId(),
+            $keys[3] => $this->getPrice(),
+            $keys[4] => $this->getPromoPrice(),
+            $keys[5] => $this->getQuantityFrom(),
+            $keys[6] => $this->getQuantityTo(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1004,6 +1087,9 @@ abstract class DigressivePrice implements ActiveRecordInterface
         if ($includeForeignObjects) {
             if (null !== $this->aProduct) {
                 $result['Product'] = $this->aProduct->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aProductSaleElements) {
+                $result['ProductSaleElements'] = $this->aProductSaleElements->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1046,15 +1132,18 @@ abstract class DigressivePrice implements ActiveRecordInterface
                 $this->setProductId($value);
                 break;
             case 2:
-                $this->setPrice($value);
+                $this->setProductSaleElementsId($value);
                 break;
             case 3:
-                $this->setPromoPrice($value);
+                $this->setPrice($value);
                 break;
             case 4:
-                $this->setQuantityFrom($value);
+                $this->setPromoPrice($value);
                 break;
             case 5:
+                $this->setQuantityFrom($value);
+                break;
+            case 6:
                 $this->setQuantityTo($value);
                 break;
         } // switch()
@@ -1081,24 +1170,13 @@ abstract class DigressivePrice implements ActiveRecordInterface
     {
         $keys = DigressivePriceTableMap::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) {
-            $this->setId($arr[$keys[0]]);
-        }
-        if (array_key_exists($keys[1], $arr)) {
-            $this->setProductId($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setPrice($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setPromoPrice($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setQuantityFrom($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setQuantityTo($arr[$keys[5]]);
-        }
+        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
+        if (array_key_exists($keys[1], $arr)) $this->setProductId($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setProductSaleElementsId($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setPrice($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setPromoPrice($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setQuantityFrom($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setQuantityTo($arr[$keys[6]]);
     }
 
     /**
@@ -1110,24 +1188,13 @@ abstract class DigressivePrice implements ActiveRecordInterface
     {
         $criteria = new Criteria(DigressivePriceTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(DigressivePriceTableMap::ID)) {
-            $criteria->add(DigressivePriceTableMap::ID, $this->id);
-        }
-        if ($this->isColumnModified(DigressivePriceTableMap::PRODUCT_ID)) {
-            $criteria->add(DigressivePriceTableMap::PRODUCT_ID, $this->product_id);
-        }
-        if ($this->isColumnModified(DigressivePriceTableMap::PRICE)) {
-            $criteria->add(DigressivePriceTableMap::PRICE, $this->price);
-        }
-        if ($this->isColumnModified(DigressivePriceTableMap::PROMO_PRICE)) {
-            $criteria->add(DigressivePriceTableMap::PROMO_PRICE, $this->promo_price);
-        }
-        if ($this->isColumnModified(DigressivePriceTableMap::QUANTITY_FROM)) {
-            $criteria->add(DigressivePriceTableMap::QUANTITY_FROM, $this->quantity_from);
-        }
-        if ($this->isColumnModified(DigressivePriceTableMap::QUANTITY_TO)) {
-            $criteria->add(DigressivePriceTableMap::QUANTITY_TO, $this->quantity_to);
-        }
+        if ($this->isColumnModified(DigressivePriceTableMap::ID)) $criteria->add(DigressivePriceTableMap::ID, $this->id);
+        if ($this->isColumnModified(DigressivePriceTableMap::PRODUCT_ID)) $criteria->add(DigressivePriceTableMap::PRODUCT_ID, $this->product_id);
+        if ($this->isColumnModified(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID)) $criteria->add(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID, $this->product_sale_elements_id);
+        if ($this->isColumnModified(DigressivePriceTableMap::PRICE)) $criteria->add(DigressivePriceTableMap::PRICE, $this->price);
+        if ($this->isColumnModified(DigressivePriceTableMap::PROMO_PRICE)) $criteria->add(DigressivePriceTableMap::PROMO_PRICE, $this->promo_price);
+        if ($this->isColumnModified(DigressivePriceTableMap::QUANTITY_FROM)) $criteria->add(DigressivePriceTableMap::QUANTITY_FROM, $this->quantity_from);
+        if ($this->isColumnModified(DigressivePriceTableMap::QUANTITY_TO)) $criteria->add(DigressivePriceTableMap::QUANTITY_TO, $this->quantity_to);
 
         return $criteria;
     }
@@ -1174,6 +1241,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
+
         return null === $this->getId();
     }
 
@@ -1191,13 +1259,14 @@ abstract class DigressivePrice implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setProductId($this->getProductId());
+        $copyObj->setProductSaleElementsId($this->getProductSaleElementsId());
         $copyObj->setPrice($this->getPrice());
         $copyObj->setPromoPrice($this->getPromoPrice());
         $copyObj->setQuantityFrom($this->getQuantityFrom());
         $copyObj->setQuantityTo($this->getQuantityTo());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(null); // this is a auto-increment column, so set to default value
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1233,7 +1302,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
     public function setProduct(ChildProduct $v = null)
     {
         if ($v === null) {
-            $this->setProductId(null);
+            $this->setProductId(NULL);
         } else {
             $this->setProductId($v->getId());
         }
@@ -1275,12 +1344,64 @@ abstract class DigressivePrice implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a ChildProductSaleElements object.
+     *
+     * @param                  ChildProductSaleElements $v
+     * @return                 \DigressivePrice\Model\DigressivePrice The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setProductSaleElements(ChildProductSaleElements $v = null)
+    {
+        if ($v === null) {
+            $this->setProductSaleElementsId(NULL);
+        } else {
+            $this->setProductSaleElementsId($v->getId());
+        }
+
+        $this->aProductSaleElements = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildProductSaleElements object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDigressivePrice($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildProductSaleElements object
+     *
+     * @param      ConnectionInterface $con Optional Connection object.
+     * @return                 ChildProductSaleElements The associated ChildProductSaleElements object.
+     * @throws PropelException
+     */
+    public function getProductSaleElements(ConnectionInterface $con = null)
+    {
+        if ($this->aProductSaleElements === null && ($this->product_sale_elements_id !== null)) {
+            $this->aProductSaleElements = ProductSaleElementsQuery::create()->findPk($this->product_sale_elements_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aProductSaleElements->addDigressivePrices($this);
+             */
+        }
+
+        return $this->aProductSaleElements;
+    }
+
+    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
     {
         $this->id = null;
         $this->product_id = null;
+        $this->product_sale_elements_id = null;
         $this->price = null;
         $this->promo_price = null;
         $this->quantity_from = null;
@@ -1307,6 +1428,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aProduct = null;
+        $this->aProductSaleElements = null;
     }
 
     /**
@@ -1335,6 +1457,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
+
     }
 
     /**
@@ -1353,6 +1476,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
+
     }
 
     /**
@@ -1371,6 +1495,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
+
     }
 
     /**
@@ -1389,6 +1514,7 @@ abstract class DigressivePrice implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
+
     }
 
 
@@ -1432,4 +1558,5 @@ abstract class DigressivePrice implements ActiveRecordInterface
 
         throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));
     }
+
 }

@@ -24,16 +24,24 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
     protected function getArgDefinitions()
     {
-        return new ArgumentCollection(Argument::createIntTypeArgument('product_id'));
+        return new ArgumentCollection(
+            Argument::createIntTypeArgument('product_id'),
+            Argument::createIntTypeArgument('product_sale_elements_id')
+        );
     }
 
     public function buildModelCriteria()
     {
         $productId = $this->getProductId();
+        $productSaleElementsId = $this->getProductSaleElementsId();
         $search = DigressivePriceQuery::create();
 
         if (!is_null($productId)) {
             $search->filterByProductId($productId);
+        }
+
+        if (!is_null($productSaleElementsId)) {
+            $search->filterByProductSaleElementsId($productSaleElementsId);
         }
 
         return $search;
@@ -62,6 +70,7 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $loopResultRow
                     ->set("ID", $digressivePrice->getId())
                     ->set("PRODUCT_ID", $productId)
+                    ->set("PRODUCT_SALE_ELEMENTS_ID", $digressivePrice->getProductSaleElementsId())
                     ->set("QUANTITY_FROM", $digressivePrice->getQuantityFrom())
                     ->set("QUANTITY_TO", $digressivePrice->getQuantityTo())
                     ->set("PRICE", $price)

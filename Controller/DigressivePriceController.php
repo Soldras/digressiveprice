@@ -42,6 +42,7 @@ class DigressivePriceController extends BaseAdminController
             // Dispatch create
             $event = new DigressivePriceEvent(
                 $form->get('productId')->getData(),
+                $form->get('productSaleElementsId')->getData(),
                 $form->get('price')->getData(),
                 $form->get('promo')->getData(),
                 $form->get('quantityFrom')->getData(),
@@ -82,6 +83,7 @@ class DigressivePriceController extends BaseAdminController
             $event = new DigressivePriceFullEvent(
                 $form->get('id')->getData(),
                 $form->get('productId')->getData(),
+                $form->get('productSaleElementsId')->getData(),
                 $form->get('price')->getData(),
                 $form->get('promo')->getData(),
                 $form->get('quantityFrom')->getData(),

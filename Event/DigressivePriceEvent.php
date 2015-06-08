@@ -13,6 +13,7 @@ class DigressivePriceEvent extends ActionEvent
 {
 
     protected $productId;
+    protected $productSaleElementsId;
     protected $price;
     protected $promoPrice;
     protected $quantityFrom;
@@ -20,12 +21,14 @@ class DigressivePriceEvent extends ActionEvent
 
     public function __construct(
         $productId,
+        $productSaleElementsId,
         $price,
         $promoPrice,
         $quantityFrom,
         $quantityTo
     ) {
         $this->productId = $productId;
+        $this->productSaleElementsId = $productSaleElementsId;
         $this->price = $price;
         $this->promoPrice = $promoPrice;
         $this->quantityFrom = $quantityFrom;
@@ -46,6 +49,22 @@ class DigressivePriceEvent extends ActionEvent
     public function setProductId($productId)
     {
         $this->productId = $productId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProductSaleElementsId()
+    {
+        return $this->productSaleElementsId;
+    }
+
+    /**
+     * @param mixed $productSaleElementsId
+     */
+    public function setProductSaleElementsId($productSaleElementsId)
+    {
+        $this->productSaleElementsId = $productSaleElementsId;
     }
 
     /**

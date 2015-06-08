@@ -59,20 +59,22 @@ The Hook used is called "product.tab-content".
 
 |Argument |Description |
 |---      |--- |
-|**product_id** | The ID of the product to get digressive prices. Example: "product_id=3" |
+|**product_id**               | The ID of the product to get digressive prices. Example: "product_id=3" |
+|**product_sale_elements_id** | The ID of the product sale elements to get digressive prices. Example: "product_sale_elements_id=6" |
 
 ### Output arguments
 
 |Variable   |Description |
 |---        |--- |
-|$ID                | The digressive price range's ID |
-|$PRODUCT_ID        | The product which th current digressive price is linked to |
-|$QUANTITY_FROM     | The quantity beginning of the range of the digressive price |
-|$QUANTITY_TO       | The quantity ending of the range of the digressive price |
-|$PRICE             | The tax free price of the product if the quantity is in the range |
-|$PROMO_PRICE       | The promo tax free price of the product if the quantity is in the range |
-|$TAXED_PRICE       | The taxed price of the product. Uses the tax rules of the user's country |
-|$TAXED_PROMO_PRICE | The taxed promo price of the product. Uses the tax rules of the user's country |
+|$ID                       | The digressive price range's ID |
+|$PRODUCT_ID               | The product which th current digressive price is linked to |
+|$PRODUCT_SALE_ELEMENTS_ID | The product sale elements the current digressive price is linked to |
+|$QUANTITY_FROM            | The quantity beginning of the range of the digressive price |
+|$QUANTITY_TO              | The quantity ending of the range of the digressive price |
+|$PRICE                    | The tax free price of the product if the quantity is in the range |
+|$PROMO_PRICE              | The promo tax free price of the product if the quantity is in the range |
+|$TAXED_PRICE              | The taxed price of the product. Uses the tax rules of the user's country |
+|$TAXED_PROMO_PRICE        | The taxed promo price of the product. Uses the tax rules of the user's country |
 
 ### Example
 

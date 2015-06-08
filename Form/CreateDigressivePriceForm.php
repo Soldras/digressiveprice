@@ -37,6 +37,17 @@ class CreateDigressivePriceForm extends BaseForm
             )
         )
         ->add(
+            "productSaleElementsId",
+            "number",
+            array(
+                "label" => $this->translator->trans(
+                    'product sale elements ID',
+                    [],
+                    DigressivePrice::DOMAIN.'.bo.default'
+                )
+            )
+        )
+        ->add(
             "quantityFrom",
             "number",
             array(
@@ -152,8 +163,10 @@ class CreateDigressivePriceForm extends BaseForm
     public function notSurround($value, ExecutionContextInterface $context, $isUpdating = false)
     {
         // Check if the values are around FROM and TO quantities of an existing digressive price of the current product
+        // (or product sale elements)
         $digressivePricesQuery = DigressivePriceQuery::create()
             ->filterByProductId($this->getForm()->getData()['productId'])
+            ->filterByProductSaleElementsId($this->getForm()->getData()['productSaleElementsId'])
             ->filterByQuantityFrom($this->getForm()->getData()['quantityFrom'], Criteria::GREATER_EQUAL)
             ->filterByQuantityTo($value, Criteria::LESS_EQUAL);
 
@@ -180,8 +193,10 @@ class CreateDigressivePriceForm extends BaseForm
     public function inRangeQuery($value, $isUpdating)
     {
         // Check if the value is between FROM and TO quantities of an existing digressive price of the current product
+        // (or product sale elements)
         $digressivePricesQuery = DigressivePriceQuery::create()
             ->filterByProductId($this->getForm()->getData()['productId'])
+            ->filterByProductSaleElementsId($this->getForm()->getData()['productSaleElementsId'])
             ->filterByQuantityFrom($value, Criteria::LESS_EQUAL)
             ->filterByQuantityTo($value, Criteria::GREATER_EQUAL);
 

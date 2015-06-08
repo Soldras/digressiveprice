@@ -11,6 +11,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
+                    <th>{intl l="Attribute combination" d="digressiveprice.bo.default"}</th>
                     <th>{intl l="From" d="digressiveprice.bo.default"}</th>
                     <th>{intl l="To" d="digressiveprice.bo.default"}</th>
                     <th>{intl l="Price w/o taxes" d="digressiveprice.bo.default"}</th>
@@ -36,6 +37,23 @@
                         {form_field form=$form field="productId"}
                         <input type="hidden" name="{$name}" value="{$PRODUCT_ID}">
                         {/form_field}
+
+                        <!-- Attribute combination -->
+                        <td>
+                            {form_field form=$form field="productSaleElementsId"}
+                            {$selected_pse = $PRODUCT_SALE_ELEMENTS_ID}
+                            <select name="{$name}" class="form-control">
+                                <option value="" {if not $selected_pse}selected{/if}>{intl l="All" d="digressiveprice.bo.default"}</option>
+                                {loop name="productSaleElements" type="product_sale_elements" product={$PRODUCT_ID} backend_context="1"}
+                                    <option value="{$ID}" {if $ID == $selected_pse}selected{/if}>
+                                    {loop name="productSaleElementsAttributes" type="attribute_combination" product_sale_elements=$ID backend_context="1"}
+                                       {if $LOOP_COUNT > 1} / {/if}{$ATTRIBUTE_TITLE}: {$ATTRIBUTE_AVAILABILITY_TITLE}
+                                    {/loop}
+                                    </option>
+                                {/loop}
+                            </select>
+                            {/form_field}
+                        </td>
 
                         <!-- Quantities -->
                         <td>
@@ -99,6 +117,22 @@
                         {form_field form=$form field="productId"}
                         <input type="hidden" name="{$name}" value="{product attr='id'}">
                         {/form_field}
+
+                        <!-- Attribute combination -->
+                        <td>
+                            {form_field form=$form field="productSaleElementsId"}
+                            <select name="{$name}" class="form-control">
+                                <option value="" >{intl l="All" d="digressiveprice.bo.default"}</option>
+                                {loop name="productSaleElements" type="product_sale_elements" product={product attr='id'} backend_context="1"}
+                                    <option value="{$ID}">
+                                    {loop name="productSaleElementsAttributes" type="attribute_combination" product_sale_elements=$ID backend_context="1"}
+                                       {if $LOOP_COUNT > 1} / {/if}{$ATTRIBUTE_TITLE}: {$ATTRIBUTE_AVAILABILITY_TITLE}
+                                    {/loop}
+                                    </option>
+                                {/loop}
+                            </select>
+                            {/form_field}
+                        </td>
 
                         <!-- Quantities -->
                         <td>

@@ -8,6 +8,7 @@ use DigressivePrice\Model\DigressivePrice as ChildDigressivePrice;
 use DigressivePrice\Model\DigressivePriceQuery as ChildDigressivePriceQuery;
 use DigressivePrice\Model\Map\DigressivePriceTableMap;
 use DigressivePrice\Model\Thelia\Model\Product;
+use DigressivePrice\Model\Thelia\Model\ProductSaleElements;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -24,6 +25,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildDigressivePriceQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildDigressivePriceQuery orderByProductId($order = Criteria::ASC) Order by the product_id column
+ * @method     ChildDigressivePriceQuery orderByProductSaleElementsId($order = Criteria::ASC) Order by the product_sale_elements_id column
  * @method     ChildDigressivePriceQuery orderByPrice($order = Criteria::ASC) Order by the price column
  * @method     ChildDigressivePriceQuery orderByPromoPrice($order = Criteria::ASC) Order by the promo_price column
  * @method     ChildDigressivePriceQuery orderByQuantityFrom($order = Criteria::ASC) Order by the quantity_from column
@@ -31,6 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildDigressivePriceQuery groupById() Group by the id column
  * @method     ChildDigressivePriceQuery groupByProductId() Group by the product_id column
+ * @method     ChildDigressivePriceQuery groupByProductSaleElementsId() Group by the product_sale_elements_id column
  * @method     ChildDigressivePriceQuery groupByPrice() Group by the price column
  * @method     ChildDigressivePriceQuery groupByPromoPrice() Group by the promo_price column
  * @method     ChildDigressivePriceQuery groupByQuantityFrom() Group by the quantity_from column
@@ -44,11 +47,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDigressivePriceQuery rightJoinProduct($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Product relation
  * @method     ChildDigressivePriceQuery innerJoinProduct($relationAlias = null) Adds a INNER JOIN clause to the query using the Product relation
  *
+ * @method     ChildDigressivePriceQuery leftJoinProductSaleElements($relationAlias = null) Adds a LEFT JOIN clause to the query using the ProductSaleElements relation
+ * @method     ChildDigressivePriceQuery rightJoinProductSaleElements($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ProductSaleElements relation
+ * @method     ChildDigressivePriceQuery innerJoinProductSaleElements($relationAlias = null) Adds a INNER JOIN clause to the query using the ProductSaleElements relation
+ *
  * @method     ChildDigressivePrice findOne(ConnectionInterface $con = null) Return the first ChildDigressivePrice matching the query
  * @method     ChildDigressivePrice findOneOrCreate(ConnectionInterface $con = null) Return the first ChildDigressivePrice matching the query, or a new ChildDigressivePrice object populated from the query conditions when no match is found
  *
  * @method     ChildDigressivePrice findOneById(int $id) Return the first ChildDigressivePrice filtered by the id column
  * @method     ChildDigressivePrice findOneByProductId(int $product_id) Return the first ChildDigressivePrice filtered by the product_id column
+ * @method     ChildDigressivePrice findOneByProductSaleElementsId(int $product_sale_elements_id) Return the first ChildDigressivePrice filtered by the product_sale_elements_id column
  * @method     ChildDigressivePrice findOneByPrice(double $price) Return the first ChildDigressivePrice filtered by the price column
  * @method     ChildDigressivePrice findOneByPromoPrice(double $promo_price) Return the first ChildDigressivePrice filtered by the promo_price column
  * @method     ChildDigressivePrice findOneByQuantityFrom(int $quantity_from) Return the first ChildDigressivePrice filtered by the quantity_from column
@@ -56,6 +64,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     array findById(int $id) Return ChildDigressivePrice objects filtered by the id column
  * @method     array findByProductId(int $product_id) Return ChildDigressivePrice objects filtered by the product_id column
+ * @method     array findByProductSaleElementsId(int $product_sale_elements_id) Return ChildDigressivePrice objects filtered by the product_sale_elements_id column
  * @method     array findByPrice(double $price) Return ChildDigressivePrice objects filtered by the price column
  * @method     array findByPromoPrice(double $promo_price) Return ChildDigressivePrice objects filtered by the promo_price column
  * @method     array findByQuantityFrom(int $quantity_from) Return ChildDigressivePrice objects filtered by the quantity_from column
@@ -148,7 +157,7 @@ abstract class DigressivePriceQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, PRODUCT_ID, PRICE, PROMO_PRICE, QUANTITY_FROM, QUANTITY_TO FROM digressive_price WHERE ID = :p0';
+        $sql = 'SELECT ID, PRODUCT_ID, PRODUCT_SALE_ELEMENTS_ID, PRICE, PROMO_PRICE, QUANTITY_FROM, QUANTITY_TO FROM digressive_price WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -220,6 +229,7 @@ abstract class DigressivePriceQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
+
         return $this->addUsingAlias(DigressivePriceTableMap::ID, $key, Criteria::EQUAL);
     }
 
@@ -232,6 +242,7 @@ abstract class DigressivePriceQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
+
         return $this->addUsingAlias(DigressivePriceTableMap::ID, $keys, Criteria::IN);
     }
 
@@ -317,6 +328,49 @@ abstract class DigressivePriceQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DigressivePriceTableMap::PRODUCT_ID, $productId, $comparison);
+    }
+
+    /**
+     * Filter the query on the product_sale_elements_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByProductSaleElementsId(1234); // WHERE product_sale_elements_id = 1234
+     * $query->filterByProductSaleElementsId(array(12, 34)); // WHERE product_sale_elements_id IN (12, 34)
+     * $query->filterByProductSaleElementsId(array('min' => 12)); // WHERE product_sale_elements_id > 12
+     * </code>
+     *
+     * @see       filterByProductSaleElements()
+     *
+     * @param     mixed $productSaleElementsId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDigressivePriceQuery The current query, for fluid interface
+     */
+    public function filterByProductSaleElementsId($productSaleElementsId = null, $comparison = null)
+    {
+        if (is_array($productSaleElementsId)) {
+            $useMinMax = false;
+            if (isset($productSaleElementsId['min'])) {
+                $this->addUsingAlias(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID, $productSaleElementsId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($productSaleElementsId['max'])) {
+                $this->addUsingAlias(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID, $productSaleElementsId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID, $productSaleElementsId, $comparison);
     }
 
     /**
@@ -559,6 +613,81 @@ abstract class DigressivePriceQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \DigressivePrice\Model\Thelia\Model\ProductSaleElements object
+     *
+     * @param \DigressivePrice\Model\Thelia\Model\ProductSaleElements|ObjectCollection $productSaleElements The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDigressivePriceQuery The current query, for fluid interface
+     */
+    public function filterByProductSaleElements($productSaleElements, $comparison = null)
+    {
+        if ($productSaleElements instanceof \DigressivePrice\Model\Thelia\Model\ProductSaleElements) {
+            return $this
+                ->addUsingAlias(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID, $productSaleElements->getId(), $comparison);
+        } elseif ($productSaleElements instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID, $productSaleElements->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByProductSaleElements() only accepts arguments of type \DigressivePrice\Model\Thelia\Model\ProductSaleElements or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ProductSaleElements relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildDigressivePriceQuery The current query, for fluid interface
+     */
+    public function joinProductSaleElements($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ProductSaleElements');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ProductSaleElements');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ProductSaleElements relation ProductSaleElements object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \DigressivePrice\Model\Thelia\Model\ProductSaleElementsQuery A secondary query class using the current class as primary query
+     */
+    public function useProductSaleElementsQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinProductSaleElements($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ProductSaleElements', '\DigressivePrice\Model\Thelia\Model\ProductSaleElementsQuery');
+    }
+
+    /**
      * Exclude object from result
      *
      * @param   ChildDigressivePrice $digressivePrice Object to remove from the list of results
@@ -619,16 +748,16 @@ abstract class DigressivePriceQuery extends ModelCriteria
      */
      public function delete(ConnectionInterface $con = null)
      {
-         if (null === $con) {
-             $con = Propel::getServiceContainer()->getWriteConnection(DigressivePriceTableMap::DATABASE_NAME);
-         }
+        if (null === $con) {
+            $con = Propel::getServiceContainer()->getWriteConnection(DigressivePriceTableMap::DATABASE_NAME);
+        }
 
-         $criteria = $this;
+        $criteria = $this;
 
         // Set the correct dbName
         $criteria->setDbName(DigressivePriceTableMap::DATABASE_NAME);
 
-         $affectedRows = 0; // initialize var to track total num of affected rows
+        $affectedRows = 0; // initialize var to track total num of affected rows
 
         try {
             // use transaction because $criteria could contain info
@@ -636,7 +765,7 @@ abstract class DigressivePriceQuery extends ModelCriteria
             $con->beginTransaction();
 
 
-            DigressivePriceTableMap::removeInstanceFromPool($criteria);
+        DigressivePriceTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
             DigressivePriceTableMap::clearRelatedInstancePool();
@@ -647,5 +776,6 @@ abstract class DigressivePriceQuery extends ModelCriteria
             $con->rollBack();
             throw $e;
         }
-     }
+    }
+
 } // DigressivePriceQuery

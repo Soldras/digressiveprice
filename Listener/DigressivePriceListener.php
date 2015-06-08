@@ -7,6 +7,7 @@ use DigressivePrice\Event\DigressivePriceFullEvent;
 use DigressivePrice\Event\DigressivePriceIdEvent;
 use DigressivePrice\Model\DigressivePrice;
 use DigressivePrice\Model\DigressivePriceQuery;
+use DigressivePrice\Model\Map\DigressivePriceTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Action\BaseAction;
@@ -61,39 +62,39 @@ class DigressivePriceListener extends BaseAction implements EventSubscriberInter
         $cartItem = $event->getCartItem();
 
         // Check if the product has some digressive prices
+        $digressivePrice = DigressivePriceQuery::create()
+            ->filterByProductId($cartItem->getProductId())
+            // Ensure that the digressive price specific to the product sale elements is considered first
+            ->orderByProductSaleElementsId(Criteria::DESC)
+            ->filterByQuantityFrom($cartItem->getQuantity(), Criteria::LESS_EQUAL)
+            ->filterByQuantityTo($cartItem->getQuantity(), Criteria::GREATER_EQUAL)
+            // Include the digressive prices applying to all pse...
+            ->where(
+                DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID . Criteria::EQUAL . "?",
+                $event->getProductSaleElementsId()
+            )
+            ->_or()
+            // ...as well as this specific pse
+            ->where(
+                DigressivePriceTableMap::PRODUCT_SALE_ELEMENTS_ID . Criteria::ISNULL
+            )
+            ->findOne();
 
-        $dpq = DigressivePriceQuery::create()
-            ->findByProductId($cartItem->getProductId());
+        if (!is_null($digressivePrice)) {
+            // Change cart item's prices with those from the corresponding range
+            $cartItem
+                ->setPrice($digressivePrice->getPrice())
+                ->setPromoPrice($digressivePrice->getPromoPrice())
+                ->save();
+        } else {
+            // Change cart item's prices with the default out of range ones
+            $prices = ProductPriceQuery::create()
+                ->findOneByProductSaleElementsId($cartItem->getProductSaleElementsId());
 
-        if (count($dpq) != 0) {
-
-            // Check if the quantity is into a range
-
-            $dpq = DigressivePriceQuery::create()
-                ->filterByProductId($cartItem->getProductId())
-                ->filterByQuantityFrom($cartItem->getQuantity(), Criteria::LESS_EQUAL)
-                ->filterByQuantityTo($cartItem->getQuantity(), Criteria::GREATER_EQUAL)
-                ->find();
-
-            if ($dpq->count() === 1) {
-
-                // Change cart item's prices with those from the corresponding range
-                $cartItem
-                    ->setPrice($dpq[0]->getPrice())
-                    ->setPromoPrice($dpq[0]->getPromoPrice())
-                    ->save();
-            } else {
-
-                // Change cart item's prices with the default out of range ones
-
-                $prices = ProductPriceQuery::create()
-                    ->findOneByProductSaleElementsId($cartItem->getProductSaleElementsId());
-
-                $cartItem
-                    ->setPrice($prices->getPrice())
-                    ->setPromoPrice($prices->getPromoPrice())
-                    ->save();
-            }
+            $cartItem
+                ->setPrice($prices->getPrice())
+                ->setPromoPrice($prices->getPromoPrice())
+                ->save();
         }
     }
 
@@ -108,6 +109,7 @@ class DigressivePriceListener extends BaseAction implements EventSubscriberInter
 
         $digressivePrice
             ->setProductId($event->getProductId())
+            ->setProductSaleElementsId($event->getProductSaleElementsId())
             ->setPrice($event->getPrice())
             ->setPromoPrice($event->getPromoPrice())
             ->setQuantityFrom($event->getQuantityFrom())
@@ -126,6 +128,7 @@ class DigressivePriceListener extends BaseAction implements EventSubscriberInter
 
         $digressivePrice
             ->setProductId($event->getProductId())
+            ->setProductSaleElementsId($event->getProductSaleElementsId())
             ->setPrice($event->getPrice())
             ->setPromoPrice($event->getPromoPrice())
             ->setQuantityFrom($event->getQuantityFrom())

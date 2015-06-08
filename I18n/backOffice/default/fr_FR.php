@@ -2,6 +2,7 @@
 return array(
     // BO display
     'Digressive price' => 'Prix dégressif',
+    'Attribute combination' => 'Combinaison de déclinaisons',
     'Quantity' => 'Quantité',
     'From' => 'De',
     'To' => 'A',
@@ -13,9 +14,11 @@ return array(
     'Remove' => 'Supprimer',
 
     // Form labels & errors
+    'All' => 'Toutes',
     'FROM {quantity}' => 'DE {quantité}',
     'TO {quantity}' => 'A {quantité}',
     'product ID' => 'ID du produit',
+    'product sale elements ID' => 'ID de la combinaison de déclinaisons du produit',
     'The end of range must be greater than the beginning' => 'La quantité de fin de tranche doit être inférieure à celle de début',
     'Your new range surrounds an existing one' => 'Votre tranche de quantités en englobe une autre',
     'Your new range begins in another one' => 'Votre tranche de quantités débute dans une autre',

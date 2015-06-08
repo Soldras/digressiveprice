@@ -15,6 +15,7 @@ class DigressivePriceFullEvent extends DigressivePriceEvent
     public function __construct(
         $id,
         $productId,
+        $productSaleElementsId,
         $price,
         $promoPrice,
         $quantityFrom,
@@ -22,6 +23,7 @@ class DigressivePriceFullEvent extends DigressivePriceEvent
     ) {
         $this->id = $id;
         $this->productId = $productId;
+        $this->productSaleElementsId = $productSaleElementsId;
         $this->price = $price;
         $this->promoPrice = $promoPrice;
         $this->quantityFrom = $quantityFrom;

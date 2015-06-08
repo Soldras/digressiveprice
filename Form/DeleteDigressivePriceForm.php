@@ -30,6 +30,17 @@ class DeleteDigressivePriceForm extends BaseForm
             )
         )
         ->add(
+            "productSaleElementsId",
+            "number",
+            array(
+                "label" => $this->translator->trans(
+                    'product sale elements ID',
+                    [],
+                    DigressivePrice::DOMAIN.'.bo.default'
+                )
+            )
+        )
+        ->add(
             "id",
             "number",
             array(

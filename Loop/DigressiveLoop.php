@@ -9,7 +9,9 @@ use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use DigressivePrice\Model\DigressivePriceQuery;
+use Thelia\Model\AttributeCombinationQuery;
 use Thelia\Model\ProductQuery;
+use Thelia\Model\ProductSaleElementsQuery;
 
 /**
  * Class DigressiveLoop
@@ -56,6 +58,9 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $productId = $digressivePrice->getProductId();
             $product = ProductQuery::create()->findOneById($productId);
 
+            $pse = ProductSaleElementsQuery::create()->findOneById($digressivePrice->getProductSaleElementsId());
+            $pseAttr = AttributeCombinationQuery::create()->findOneByProductSaleElementsId($digressivePrice->getProductSaleElementsId());
+
             // Get prices
             $price = $digressivePrice->getPrice();
             $promo = $digressivePrice->getPromoPrice();
@@ -70,6 +75,7 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $loopResultRow
                     ->set("ID", $digressivePrice->getId())
                     ->set("PRODUCT_ID", $productId)
+                    ->set("PRODUCT_TITLE", $product->getTitle())
                     ->set("PRODUCT_SALE_ELEMENTS_ID", $digressivePrice->getProductSaleElementsId())
                     ->set("QUANTITY_FROM", $digressivePrice->getQuantityFrom())
                     ->set("QUANTITY_TO", $digressivePrice->getQuantityTo())
@@ -77,6 +83,10 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                     ->set("PROMO_PRICE", $promo)
                     ->set("TAXED_PRICE", $taxedPrice)
                     ->set("TAXED_PROMO_PRICE", $taxedPromoPrice);
+
+            if($pseAttr){
+                $loopResultRow->set("PRODUCT_SALE_ELEMENTS_TITLE", $pseAttr->getVirtualColumn("attribute_av_i18n_TITLE"));
+            }
 
             $loopResult->addRow($loopResultRow);
         }

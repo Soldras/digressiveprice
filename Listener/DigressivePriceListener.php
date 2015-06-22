@@ -61,6 +61,11 @@ class DigressivePriceListener extends BaseAction implements EventSubscriberInter
     {
         $cartItem = $event->getCartItem();
 
+
+        if(!$event->getProductSaleElementsId() && $cartItem->getProductSaleElementsId()){
+            $event->setProductSaleElementsId($cartItem->getProductSaleElementsId());
+        }
+
         // Check if the product has some digressive prices
         $digressivePrice = DigressivePriceQuery::create()
             ->filterByProductId($cartItem->getProductId())

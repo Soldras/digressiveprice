@@ -2,6 +2,7 @@
 
 namespace DigressivePrice\Loop;
 
+use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\PropelSearchLoopInterface;
 use Thelia\Core\Template\Element\LoopResult;
@@ -28,7 +29,21 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     {
         return new ArgumentCollection(
             Argument::createIntTypeArgument('product_id'),
-            Argument::createIntTypeArgument('product_sale_elements_id')
+            Argument::createIntTypeArgument('product_sale_elements_id'),
+            Argument::createEnumListTypeArgument("order", [
+                "id",
+                "id-reverse",
+                "product-id",
+                "product-id-reverse",
+                "pse-id",
+                "pse-id-reverse",
+                "price",
+                "price-reverse",
+                "promo-price",
+                "promo-price-reverse",
+                "range"
+
+            ], "id")
         );
     }
 
@@ -44,6 +59,56 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
         if (!is_null($productSaleElementsId)) {
             $search->filterByProductSaleElementsId($productSaleElementsId);
+        }
+        foreach ($this->getOrder() as $order) {
+            switch ($order) {
+                case "id":
+                    $search->orderById();
+                    break;
+
+                case "id-reverse":
+                    $search->orderById(Criteria::DESC);
+                    break;
+
+                case "product-id":
+                    $search->orderByProductId();
+                    break;
+
+                case "product-id-reverse":
+                    $search->orderByProductId(Criteria::DESC);
+                    break;
+
+                case "pse-id":
+                    $search->orderByProductSaleElementsId();
+                    break;
+
+                case "pse-id-reverse":
+                    $search->orderByProductSaleElementsId(Criteria::DESC);
+                    break;
+
+                case "price":
+                    $search->orderByPrice();
+                    break;
+
+                case "price-reverse":
+                    $search->orderByPrice(Criteria::DESC);
+                    break;
+
+                case "promo-price":
+                    $search->orderByPromoPrice(Criteria::DESC);
+                    break;
+
+                case "promo-price-reverse":
+                    $search->orderByPromoPrice(Criteria::DESC);
+                    break;
+
+                case "range":
+                    $search->orderByQuantityFrom()->orderByQuantityTo();
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         return $search;
@@ -73,19 +138,20 @@ class DigressiveLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $taxedPromoPrice = $product->getTaxedPromoPrice($taxCountry, $promo);
 
             $loopResultRow
-                    ->set("ID", $digressivePrice->getId())
-                    ->set("PRODUCT_ID", $productId)
-                    ->set("PRODUCT_TITLE", $product->getTitle())
-                    ->set("PRODUCT_SALE_ELEMENTS_ID", $digressivePrice->getProductSaleElementsId())
-                    ->set("QUANTITY_FROM", $digressivePrice->getQuantityFrom())
-                    ->set("QUANTITY_TO", $digressivePrice->getQuantityTo())
-                    ->set("PRICE", $price)
-                    ->set("PROMO_PRICE", $promo)
-                    ->set("TAXED_PRICE", $taxedPrice)
-                    ->set("TAXED_PROMO_PRICE", $taxedPromoPrice);
+                ->set("ID", $digressivePrice->getId())
+                ->set("PRODUCT_ID", $productId)
+                ->set("PRODUCT_TITLE", $product->getTitle())
+                ->set("PRODUCT_SALE_ELEMENTS_ID", $digressivePrice->getProductSaleElementsId())
+                ->set("QUANTITY_FROM", $digressivePrice->getQuantityFrom())
+                ->set("QUANTITY_TO", $digressivePrice->getQuantityTo())
+                ->set("PRICE", $price)
+                ->set("PROMO_PRICE", $promo)
+                ->set("TAXED_PRICE", $taxedPrice)
+                ->set("TAXED_PROMO_PRICE", $taxedPromoPrice);
 
-            if($pseAttr){
-                $loopResultRow->set("PRODUCT_SALE_ELEMENTS_TITLE", $pseAttr->getVirtualColumn("attribute_av_i18n_TITLE"));
+            if ($pseAttr) {
+                $loopResultRow->set("PRODUCT_SALE_ELEMENTS_TITLE",
+                    $pseAttr->getVirtualColumn("attribute_av_i18n_TITLE"));
             }
 
             $loopResult->addRow($loopResultRow);

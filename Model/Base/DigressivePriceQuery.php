@@ -229,7 +229,6 @@ abstract class DigressivePriceQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
-
         return $this->addUsingAlias(DigressivePriceTableMap::ID, $key, Criteria::EQUAL);
     }
 
@@ -242,7 +241,6 @@ abstract class DigressivePriceQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
-
         return $this->addUsingAlias(DigressivePriceTableMap::ID, $keys, Criteria::IN);
     }
 
@@ -748,16 +746,16 @@ abstract class DigressivePriceQuery extends ModelCriteria
      */
      public function delete(ConnectionInterface $con = null)
      {
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DigressivePriceTableMap::DATABASE_NAME);
-        }
+         if (null === $con) {
+             $con = Propel::getServiceContainer()->getWriteConnection(DigressivePriceTableMap::DATABASE_NAME);
+         }
 
-        $criteria = $this;
+         $criteria = $this;
 
         // Set the correct dbName
         $criteria->setDbName(DigressivePriceTableMap::DATABASE_NAME);
 
-        $affectedRows = 0; // initialize var to track total num of affected rows
+         $affectedRows = 0; // initialize var to track total num of affected rows
 
         try {
             // use transaction because $criteria could contain info
@@ -765,7 +763,7 @@ abstract class DigressivePriceQuery extends ModelCriteria
             $con->beginTransaction();
 
 
-        DigressivePriceTableMap::removeInstanceFromPool($criteria);
+            DigressivePriceTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
             DigressivePriceTableMap::clearRelatedInstancePool();
@@ -776,6 +774,5 @@ abstract class DigressivePriceQuery extends ModelCriteria
             $con->rollBack();
             throw $e;
         }
-    }
-
+     }
 } // DigressivePriceQuery

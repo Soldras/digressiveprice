@@ -181,7 +181,7 @@
 
     {loop type="product" name="theProduct" id={product attr="id"}}
         {if $IS_PROMO==1}
-            {loop type="digressive" name="digressivePrice" product_id=$ID}
+            {loop type="digressive" name="digressivePrice" product_id=$ID order="range"}
                 <tr>
                     {if $QUANTITY_FROM != 0 && $QUANTITY_TO == 99999}
                         <td>From {$QUANTITY_FROM}</td>
@@ -193,7 +193,7 @@
                 </tr>
             {/loop}
         {else}
-            {loop type="digressive" name="digressivePrice" product_id=$ID}
+            {loop type="digressive" name="digressivePrice" product_id=$ID order="range"}
                 <tr>
                     {if $QUANTITY_FROM != 0 && $QUANTITY_TO == 99999}
                         <td>From {$QUANTITY_FROM}</td>

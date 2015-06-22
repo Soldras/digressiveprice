@@ -62,7 +62,7 @@ class DigressivePriceListener extends BaseAction implements EventSubscriberInter
         $cartItem = $event->getCartItem();
 
 
-        if(!$event->getProductSaleElementsId() && $cartItem->getProductSaleElementsId()){
+        if (!$event->getProductSaleElementsId() && $cartItem->getProductSaleElementsId()) {
             $event->setProductSaleElementsId($cartItem->getProductSaleElementsId());
         }
 
